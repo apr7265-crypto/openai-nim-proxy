@@ -31,6 +31,26 @@ const MODEL_MAPPING = {
   'gemini-pro': 'qwen/qwen3-next-80b-a3b-thinking' 
 };
 
+// Root endpoint - Service health check in browser
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'OpenAI to NVIDIA NIM Proxy',
+    version: '1.0.0',
+    message: 'Service is running',
+    endpoints: {
+      health: '/health',
+      models: '/v1/models',
+      chat_completions: '/v1/chat/completions (POST)'
+    },
+    config: {
+      reasoning_display: SHOW_REASONING,
+      thinking_mode: ENABLE_THINKING_MODE,
+      nim_api_base: NIM_API_BASE
+    }
+  });
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ 
@@ -239,7 +259,9 @@ app.all('*', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`OpenAI to NVIDIA NIM Proxy running on port ${PORT}`);
+  console.log(`Root: http://localhost:${PORT}/`);
   console.log(`Health check: http://localhost:${PORT}/health`);
   console.log(`Reasoning display: ${SHOW_REASONING ? 'ENABLED' : 'DISABLED'}`);
   console.log(`Thinking mode: ${ENABLE_THINKING_MODE ? 'ENABLED' : 'DISABLED'}`);
 });
+
